@@ -1,0 +1,112 @@
+buildscript {
+	ext {
+		springBootVersion = '2.1.1.RELEASE'
+	}
+	repositories {
+		mavenCentral()
+	}
+	dependencies {
+		classpath("org.springframework.boot:spring-boot-gradle-plugin:${springBootVersion}")
+		classpath("net.researchgate:gradle-release:2.7.0")
+	}
+}
+
+plugins {
+	id "com.jfrog.bintray" version "1.8.4"
+	id "maven-publish"
+	id 'com.gradle.build-scan' version '1.16'
+}
+
+apply plugin: 'java'
+apply plugin: 'org.springframework.boot'
+apply plugin: 'io.spring.dependency-management'
+apply plugin: 'net.researchgate.release'
+apply plugin: 'maven'
+
+group = 'vadc'
+sourceCompatibility = 11
+
+ext {
+	bintrayUser = "$System.env.BINTRAY_USER"
+	bintrayKey = "$System.env.BINTRAY_KEY"
+}
+
+repositories {
+	mavenCentral()
+}
+
+dependencies {
+	implementation('org.springframework.boot:spring-boot-starter-web')
+	compileOnly('org.projectlombok:lombok')
+	testImplementation('org.springframework.boot:spring-boot-starter-test')
+}
+
+//release
+afterReleaseBuild.dependsOn bintrayUpload
+
+
+def pomConfig = {
+	licenses {
+		license {
+			name "The Apache Software License, Version 2.0"
+			url "http://www.apache.org/licenses/LICENSE-2.0.txt"
+			distribution "repo"
+		}
+	}
+	developers {
+		developer {
+			id "vadc"
+			name "Vadym Chekrii"
+			email "vadym.chekrii@gmail.com"
+		}
+	}
+
+	scm {
+		url "https://github.com/vadymc/HeartBeatPublisher"
+	}
+}
+
+publishing {
+	publications {
+		HeartBeatFunnel(MavenPublication) {
+			from components.java
+			groupId 'vadc'
+			artifactId 'HeartBeatPublisher'
+			version "$project.version"
+			pom.withXml {
+				def root = asNode()
+				root.appendNode('name', 'HeartBeat Publisher')
+				root.appendNode('url', 'https://github.com/vadymc/HeartBeatPublisher')
+				root.children().last() + pomConfig
+			}
+		}
+	}
+}
+
+bintray {
+	user = bintrayUser
+	key = bintrayKey
+	publications=['HeartBeatPublisher']
+	publish = true
+	pkg {
+		repo = 'heartbeat'
+		name = 'HeartBeatPublisher'
+		userOrg = 'vadc'
+		vcsUrl = 'https://github.com/vadymc/HeartBeatPublisher.git'
+		licenses = ['Apache-2.0']
+		version {
+			name = "$project.version"
+			desc = "$project.version"
+			released  = new Date()
+		}
+	}
+}
+
+release {
+	failOnUnversionedFiles = false
+}
+
+buildScan {
+	termsOfServiceUrl = 'https://gradle.com/terms-of-service'
+	termsOfServiceAgree = 'yes'
+}
