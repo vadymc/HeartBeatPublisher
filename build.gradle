@@ -37,6 +37,9 @@ repositories {
 
 dependencies {
 	implementation('org.springframework.boot:spring-boot-starter-web')
+	implementation('org.springframework:spring-jms')
+	implementation('com.amazonaws:aws-java-sdk:1.11.461')
+	implementation('com.amazonaws:amazon-sqs-java-messaging-lib:1.0.4')
 	compileOnly('org.projectlombok:lombok')
 	testImplementation('org.springframework.boot:spring-boot-starter-test')
 }
