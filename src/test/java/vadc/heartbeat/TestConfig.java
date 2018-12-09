@@ -4,6 +4,7 @@ import com.amazon.sqs.javamessaging.ProviderConfiguration;
 import com.amazon.sqs.javamessaging.SQSConnectionFactory;
 import com.amazonaws.services.sqs.AmazonSQS;
 import com.amazonaws.services.sqs.AmazonSQSClient;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Primary;
@@ -15,6 +16,9 @@ import static org.testcontainers.containers.localstack.LocalStackContainer.Servi
 
 @Configuration
 public class TestConfig {
+
+    @Value("${hbp.in.queue}")
+    private String incomingQueue;
 
     @Bean
     @Profile("!travis")
@@ -32,7 +36,7 @@ public class TestConfig {
                 .withEndpointConfiguration(localStackContainer.getEndpointConfiguration(SQS))
                 .withCredentials(localStackContainer.getDefaultCredentialsProvider())
                 .build();
-        amazonSQS.createQueue("notification_events");
+        amazonSQS.createQueue(incomingQueue);
         return new SQSConnectionFactory(new ProviderConfiguration(), amazonSQS);
     }
 

@@ -2,6 +2,7 @@ package vadc.heartbeat;
 
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.jms.core.JmsTemplate;
 import vadc.heartbeat.listener.NotificationEventJmsListener;
 
@@ -15,9 +16,12 @@ public class IncomingEventProcessingTest extends AbstractIntTest {
     @Autowired
     private NotificationEventJmsListener notificationEventJmsListener;
 
+    @Value("${hbp.in.queue}")
+    private String incomingQueue;
+
     @Test
     public void testIncomingEventProcessing() {
-        testJmsTemplate.convertAndSend("test_notification_events", "{testbody}");
+        testJmsTemplate.convertAndSend(incomingQueue, "{testbody}");
 
         await()
                 .until(() -> notificationEventJmsListener.isProcessed);

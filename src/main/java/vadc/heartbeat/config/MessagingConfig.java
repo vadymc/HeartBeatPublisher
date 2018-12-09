@@ -4,6 +4,7 @@ import com.amazon.sqs.javamessaging.ProviderConfiguration;
 import com.amazon.sqs.javamessaging.SQSConnectionFactory;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Profile;
 import org.springframework.jms.annotation.EnableJms;
 import org.springframework.jms.config.DefaultJmsListenerContainerFactory;
 import org.springframework.jms.support.destination.DynamicDestinationResolver;
@@ -15,6 +16,7 @@ import javax.jms.Session;
 public class MessagingConfig {
 
     @Bean
+    @Profile("!test")
     public SQSConnectionFactory sqsConnectionFactory() {
         return new SQSConnectionFactory(new ProviderConfiguration());
     }
