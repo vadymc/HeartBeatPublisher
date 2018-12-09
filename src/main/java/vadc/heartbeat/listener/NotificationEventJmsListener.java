@@ -8,8 +8,11 @@ import org.springframework.stereotype.Component;
 @Slf4j
 public class NotificationEventJmsListener {
 
-    @JmsListener(destination = "notification_events")
+    public boolean isProcessed = false;
+
+    @JmsListener(destination = "${hbp.in.queue}")
     public void processEvent(String payload) {
         log.info("Received event {}", payload);
+        isProcessed = true;
     }
 }

@@ -1,1 +1,5 @@
 server.port: 12001
+
+hbp:
+  in:
+    queue: notification_events
