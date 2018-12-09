@@ -16,7 +16,7 @@ import javax.jms.Session;
 public class MessagingConfig {
 
     @Bean
-    @Profile("!test")
+    @Profile("!localtest")
     public SQSConnectionFactory sqsConnectionFactory() {
         return new SQSConnectionFactory(new ProviderConfiguration());
     }

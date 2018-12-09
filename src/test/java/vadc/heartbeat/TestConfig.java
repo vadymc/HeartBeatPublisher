@@ -21,7 +21,7 @@ public class TestConfig {
     private String incomingQueue;
 
     @Bean
-    @Profile("!travis")
+    @Profile("localtest")
     public LocalStackContainer localStackContainer() {
         LocalStackContainer localStackContainer = new LocalStackContainer().withServices(SQS);
         localStackContainer.start();
@@ -29,7 +29,7 @@ public class TestConfig {
     }
 
     @Bean
-    @Profile("!travis")
+    @Profile("localtest")
     @Primary
     public SQSConnectionFactory sqsConnectionFactory(LocalStackContainer localStackContainer) {
         AmazonSQS amazonSQS = AmazonSQSClient.builder()
