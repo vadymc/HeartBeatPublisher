@@ -1,4 +1,4 @@
-package vadc.heartbeat;
+package vadc.heartbeat.config;
 
 import com.amazon.sqs.javamessaging.ProviderConfiguration;
 import com.amazon.sqs.javamessaging.SQSConnectionFactory;
@@ -10,8 +10,10 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Primary;
 import org.springframework.context.annotation.Profile;
 import org.springframework.jms.core.JmsTemplate;
+import org.springframework.web.client.RestTemplate;
 import org.testcontainers.containers.localstack.LocalStackContainer;
 
+import static org.mockito.Mockito.mock;
 import static org.testcontainers.containers.localstack.LocalStackContainer.Service.SQS;
 
 @Configuration
@@ -43,5 +45,10 @@ public class TestConfig {
     @Bean
     public JmsTemplate testJmsTemplate(SQSConnectionFactory sqsConnectionFactory) {
         return new JmsTemplate(sqsConnectionFactory);
+    }
+
+    @Bean
+    public RestTemplate firebaseRestTemplate() {
+        return mock(RestTemplate.class);
     }
 }

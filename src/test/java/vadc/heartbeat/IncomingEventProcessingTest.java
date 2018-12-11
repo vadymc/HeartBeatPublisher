@@ -4,9 +4,11 @@ import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.jms.core.JmsTemplate;
-import vadc.heartbeat.listener.NotificationEventJmsListener;
+import org.springframework.web.client.RestTemplate;
 
-import static org.awaitility.Awaitility.await;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.timeout;
+import static org.mockito.Mockito.verify;
 
 public class IncomingEventProcessingTest extends AbstractIntTest {
 
@@ -14,7 +16,7 @@ public class IncomingEventProcessingTest extends AbstractIntTest {
     private JmsTemplate testJmsTemplate;
 
     @Autowired
-    private NotificationEventJmsListener notificationEventJmsListener;
+    private RestTemplate firebaseRestTemplate;
 
     @Value("${hbp.in.queue}")
     private String incomingQueue;
@@ -23,7 +25,7 @@ public class IncomingEventProcessingTest extends AbstractIntTest {
     public void testIncomingEventProcessing() {
         testJmsTemplate.convertAndSend(incomingQueue, "{testbody}");
 
-        await()
-                .until(() -> notificationEventJmsListener.isProcessed);
+        verify(firebaseRestTemplate, timeout(1000).times(1))
+                .postForObject(any(String.class), any(String.class), any(Class.class));
     }
 }
